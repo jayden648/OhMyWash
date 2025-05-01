@@ -37,9 +37,8 @@
       </div>
       <div class="hero-image">
         <div class="placeholder-image">
-          <div class="shoe-icon">👟</div>
-          <p>Layanan Profesional</p>
-        </div>
+          <img src="/assets/ohmywash.jpeg" alt="OhMyWash Professional Shoe Cleaning Service" class="actual-image">
+      </div>
       </div>
     </section>
 
@@ -209,7 +208,7 @@
     </section>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/6281234567890" class="whatsapp-float" target="_blank">
+    <a href="https://wa.link/hago6d" class="whatsapp-float" target="_blank">
       <div class="whatsapp-icon">💬</div>
     </a>
 
@@ -780,22 +779,15 @@ body {
   align-items: center;
 }
 
-.placeholder-image {
-  width: 500px;
-  height: 300px;
-  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+.hero-image .actual-image {
+  max-width: 100%;
+  height: auto;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: var(--primary-color);
-  border: 1px solid rgba(74, 144, 226, 0.3);
   transition: all 0.3s ease;
 }
 
-.placeholder-image:hover {
+.hero-image .actual-image:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
@@ -1475,10 +1467,8 @@ input.error, select.error, textarea.error {
 
 /* Responsive Styles */
 @media (max-width: 1024px) {
-  .hero {
-    flex-direction: column-reverse;
-    text-align: center;
-    padding: 60px 0 40px;
+  .hero-image .actual-image {
+    max-width: 400px;
   }
   
   .hero-content p {
