@@ -38,7 +38,7 @@
       <div class="hero-image">
         <div class="placeholder-image">
           <img src="/assets/ohmywash.jpeg" alt="OhMyWash Professional Shoe Cleaning Service" class="actual-image">
-      </div>
+        </div>
       </div>
     </section>
 
@@ -84,7 +84,7 @@
             v-for="(testimonial, index) in testimonials" 
             :key="index" 
             class="testimonial-card" 
-            v-show="currentTestimonialIndex === index"
+            :class="{ 'active': currentTestimonialIndex === index }"
           >
             <p class="quote">"{{ testimonial.quote }}"</p>
             <div class="testimonial-author">
@@ -287,6 +287,7 @@ export default {
       loading: false,
       showServiceModal: false,
       selectedService: null,
+      isMobile: false,
       
       // Form data
       formData: {
@@ -415,7 +416,12 @@ export default {
     }
   },
   mounted() {
+    // Check for mobile and set initial state
+    this.checkMobile();
+    
+    // Add event listeners
     window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener('resize', this.handleResize);
     this.setupIntersectionObserver();
     
     // Check if there's a hash in the URL
@@ -426,8 +432,22 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    // Check if device is mobile
+    checkMobile() {
+      this.isMobile = window.innerWidth <= 768;
+    },
+    
+    // Handle window resize
+    handleResize() {
+      this.checkMobile();
+      if (!this.isMobile && this.showMobileMenu) {
+        this.showMobileMenu = false;
+      }
+    },
+    
     // Navigation functions
     scrollToSection(sectionId, closeMobileMenu = false) {
       const element = this.$refs[sectionId];
@@ -483,6 +503,13 @@ export default {
     
     toggleMobileMenu() {
       this.showMobileMenu = !this.showMobileMenu;
+      
+      // Add no-scroll to body when menu is open
+      if (this.showMobileMenu) {
+        document.body.classList.add('no-scroll');
+      } else {
+        document.body.classList.remove('no-scroll');
+      }
     },
     
     // Testimonial carousel functions
@@ -502,10 +529,16 @@ export default {
     selectService(service) {
       this.selectedService = service;
       this.showServiceModal = true;
+      
+      // Prevent background scrolling when modal is open
+      document.body.classList.add('no-scroll');
     },
     
     closeServiceModal() {
       this.showServiceModal = false;
+      
+      // Re-enable scrolling
+      document.body.classList.remove('no-scroll');
     },
     
     orderSelectedService() {
@@ -621,6 +654,7 @@ export default {
   --text-color: #333;
   --border-radius: 8px;
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
 }
 
 body {
@@ -628,6 +662,10 @@ body {
   color: var(--text-color);
   line-height: 1.6;
   scroll-behavior: smooth;
+}
+
+.no-scroll {
+  overflow: hidden;
 }
 
 .app-container {
@@ -687,7 +725,7 @@ body {
   font-weight: 500;
   padding: 5px 10px;
   border-radius: var(--border-radius);
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
 .nav-item:hover, .nav-item.active {
@@ -710,27 +748,29 @@ body {
   width: 100%;
   background-color: var(--dark-color);
   border-radius: 3px;
+  transition: all var(--transition-speed) ease;
 }
 
 .mobile-menu {
   display: none;
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  top: 70px;
   left: 0;
   right: 0;
+  bottom: 0;
   background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   flex-direction: column;
   padding: 20px;
   z-index: 1000;
   opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.3s ease;
+  transform: translateX(-100%);
+  transition: all var(--transition-speed) ease;
 }
 
 .mobile-menu.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
 .mobile-menu a {
@@ -739,6 +779,13 @@ body {
   color: var(--dark-color);
   border-bottom: 1px solid #eee;
   font-weight: 500;
+  font-size: 1.2rem;
+  transition: all var(--transition-speed) ease;
+}
+
+.mobile-menu a:hover {
+  color: var(--primary-color);
+  background-color: rgba(74, 144, 226, 0.05);
 }
 
 .mobile-menu a:last-child {
@@ -779,63 +826,64 @@ body {
   align-items: center;
 }
 
-.hero-image .actual-image {
-  max-width: 100%;
-  height: auto;
+.placeholder-image {
+  width: 100%;
+  height: 350px;
+  background-color: #f0f0f0;
   border-radius: var(--border-radius);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
   box-shadow: var(--box-shadow);
-  transition: all 0.3s ease;
 }
 
-.hero-image .actual-image:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+.actual-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.shoe-icon {
-  font-size: 5rem;
-  margin-bottom: 20px;
-}
-
-.placeholder-image p {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
+/* CTA Button Styles */
 .cta-button {
+  padding: 12px 24px;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 12px 30px;
+  border-radius: var(--border-radius);
   font-size: 1rem;
   font-weight: 600;
-  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
+  box-shadow: var(--box-shadow);
 }
 
 .cta-button:hover {
-  background-color: #3a7bc8;
+  background-color: #3a80d2;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Section Styles */
-section {
+.cta-button:active {
+  transform: translateY(0);
+}
+
+/* Services Styles */
+.services {
   padding: 80px 0;
-  scroll-margin-top: 80px;
+  background-color: #fff;
 }
 
 .section-title {
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
   color: var(--dark-color);
   position: relative;
 }
 
-.section-title:after {
+.section-title::after {
   content: '';
   position: absolute;
   bottom: -10px;
@@ -844,59 +892,56 @@ section {
   width: 60px;
   height: 3px;
   background-color: var(--primary-color);
-  border-radius: 3px;
 }
 
-/* Services Styles */
 .service-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
-  margin-top: 40px;
+  justify-content: center;
 }
 
 .service-card {
-  background-color: white;
+  background-color: #fff;
   border-radius: var(--border-radius);
-  padding: 30px;
   box-shadow: var(--box-shadow);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
   cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
 .service-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.service-card.featured {
-  border: 2px solid var(--primary-color);
-  position: relative;
-}
-
-.service-card.featured:before {
-  content: 'POPULER';
+.service-card.featured::before {
+  content: 'Populer';
   position: absolute;
-  top: -12px;
-  right: 20px;
-  background-color: var(--primary-color);
+  top: 10px;
+  right: -30px;
+  background-color: var(--accent-color);
   color: white;
-  padding: 5px 15px;
+  padding: 5px 40px;
   font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: 20px;
+  font-weight: 500;
+  transform: rotate(45deg);
 }
 
 .service-icon {
   font-size: 3rem;
   margin-bottom: 20px;
-  color: var(--primary-color);
 }
 
 .service-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
   margin-bottom: 15px;
   color: var(--dark-color);
 }
@@ -907,82 +952,77 @@ section {
 }
 
 .price {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: var(--accent-color);
+  color: var(--primary-color);
   margin-bottom: 20px;
 }
 
 .order-button {
+  padding: 8px 16px;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 10px 25px;
-  font-size: 0.9rem;
-  font-weight: 600;
   border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
 .order-button:hover {
-  background-color: #3a7bc8;
+  background-color: #3a80d2;
 }
 
 /* How It Works Styles */
 .how-it-works {
-  background-color: var(--light-color);
+  padding: 80px 0;
+  background-color: #f8f9fa;
 }
 
 .steps {
   display: flex;
   justify-content: space-between;
   gap: 30px;
-  margin-top: 40px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .step {
   flex: 1;
-  background-color: white;
-  border-radius: var(--border-radius);
-  padding: 30px;
-  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  position: relative;
-  transition: all 0.3s ease;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all var(--transition-speed) ease;
 }
 
 .step:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-}
-
-.step:not(:last-child):after {
-  content: '→';
-  position: absolute;
-  right: -20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2rem;
-  color: var(--primary-color);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .step-number {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   background-color: var(--primary-color);
   color: white;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 auto 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 .step h3 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
   margin-bottom: 15px;
   color: var(--dark-color);
 }
@@ -992,53 +1032,68 @@ section {
 }
 
 /* Testimonials Styles */
+.testimonials {
+  padding: 80px 0;
+  background-color: #fff;
+}
+
 .testimonial-carousel {
   position: relative;
   max-width: 800px;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .testimonial-cards {
-  position: relative;
-  height: 250px;
+  display: flex;
+  transition: all 0.5s ease;
 }
 
 .testimonial-card {
-  background-color: white;
-  border-radius: var(--border-radius);
+  flex: 0 0 100%;
   padding: 30px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  text-align: center;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all var(--transition-speed) ease;
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+  width: 100%;
 }
 
 .testimonial-card.active {
   opacity: 1;
+  transform: scale(1);
+  position: relative;
 }
 
 .quote {
-  font-size: 1.1rem;
   font-style: italic;
+  font-size: 1.1rem;
   color: #444;
   margin-bottom: 20px;
+  position: relative;
+}
+
+.quote::before, .quote::after {
+  content: '"';
+  font-size: 2rem;
+  color: #ddd;
 }
 
 .testimonial-author {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 15px;
 }
 
 .avatar {
   width: 50px;
   height: 50px;
-  background-color: #e0e0e0;
+  background-color: #eee;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -1047,37 +1102,37 @@ section {
 }
 
 .author-info h4 {
-  font-size: 1.1rem;
-  color: var(--dark-color);
-  margin-bottom: 5px;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .rating {
-  color: #ffc107;
+  color: #ffd700;
+  margin-top: 5px;
 }
 
 .carousel-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 50%;
   width: 40px;
   height: 40px;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-size: 1.5rem;
   z-index: 10;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
 .carousel-btn:hover {
   background-color: var(--primary-color);
   color: white;
-  border-color: var(--primary-color);
 }
 
 .prev {
@@ -1096,31 +1151,31 @@ section {
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
-  background-color: #e0e0e0;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  background-color: #ddd;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
-.dot.active {
+.dot.active, .dot:hover {
   background-color: var(--primary-color);
-  transform: scale(1.2);
 }
 
 /* Order Form Styles */
 .order-form {
-  background-color: var(--light-color);
+  padding: 80px 0;
+  background-color: #f8f9fa;
 }
 
 .form {
-  background-color: white;
-  border-radius: var(--border-radius);
-  padding: 40px;
-  box-shadow: var(--box-shadow);
   max-width: 800px;
   margin: 0 auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
 }
 
 .form-row {
@@ -1136,8 +1191,8 @@ section {
 }
 
 label {
-  margin-bottom: 8px;
   font-weight: 500;
+  margin-bottom: 8px;
   color: var(--dark-color);
 }
 
@@ -1145,26 +1200,21 @@ label {
   color: var(--accent-color);
 }
 
-input, select, textarea {
+input, textarea, select {
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: var(--border-radius);
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-input:focus, select:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
 }
 
-input.error, select.error, textarea.error {
+input.error, textarea.error, select.error {
   border-color: var(--accent-color);
 }
 
@@ -1174,24 +1224,28 @@ input.error, select.error, textarea.error {
   margin-top: 5px;
 }
 
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
 .submit-button {
+  padding: 12px 24px;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 12px 30px;
+  border-radius: var(--border-radius);
   font-size: 1rem;
   font-weight: 600;
-  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
   display: block;
   margin: 30px auto 0;
   min-width: 200px;
-  position: relative;
 }
 
 .submit-button:hover {
-  background-color: #3a7bc8;
+  background-color: #3a80d2;
 }
 
 .loading-spinner {
@@ -1210,67 +1264,67 @@ input.error, select.error, textarea.error {
   }
 }
 
-/* Order Success Styles */
+/* Order Success Message */
 .order-success {
-  background-color: white;
-  border-radius: var(--border-radius);
-  padding: 40px;
-  box-shadow: var(--box-shadow);
   max-width: 600px;
   margin: 0 auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   text-align: center;
 }
 
 .success-icon {
-  font-size: 5rem;
-  color: #4CAF50;
+  font-size: 3rem;
+  color: #2ecc71;
   margin-bottom: 20px;
 }
 
 .order-success h3 {
-  font-size: 1.8rem;
-  color: var(--dark-color);
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 20px;
+  color: var(--dark-color);
 }
 
 .order-success p {
-  font-size: 1.1rem;
+  margin-bottom: 15px;
   color: #666;
-  margin-bottom: 10px;
 }
 
 .order-success .cta-button {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
-/* WhatsApp Floating Button */
+/* WhatsApp Float Button */
 .whatsapp-float {
   position: fixed;
   bottom: 30px;
   right: 30px;
   width: 60px;
   height: 60px;
-  background-color: #25D366;
+  background-color: #25d366;
   color: white;
   border-radius: 50%;
   text-align: center;
-  font-size: 2rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  font-size: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
 .whatsapp-float:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
 
 .whatsapp-icon {
-  font-size: 1.8rem;
+  font-size: 2rem;
 }
 
 /* Footer Styles */
@@ -1281,12 +1335,12 @@ input.error, select.error, textarea.error {
 }
 
 .footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
 }
 
 .footer-logo {
@@ -1302,15 +1356,20 @@ input.error, select.error, textarea.error {
 
 .footer-logo h3 {
   font-size: 1.5rem;
+  font-weight: 700;
   color: white;
 }
 
-.footer-contact p {
+.footer-contact p,
+.footer-hours p {
   margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
-.footer-hours h4, .footer-social h4 {
-  font-size: 1.2rem;
+.footer h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
   margin-bottom: 15px;
   color: white;
 }
@@ -1328,10 +1387,10 @@ input.error, select.error, textarea.error {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
   color: white;
   text-decoration: none;
-  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  transition: all var(--transition-speed) ease;
 }
 
 .social-icon:hover {
@@ -1340,18 +1399,19 @@ input.error, select.error, textarea.error {
 }
 
 .footer-bottom {
-  text-align: center;
-  padding-top: 30px;
-  margin-top: 40px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  margin: 40px auto 0;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Service Modal Styles */
+.footer-bottom p {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* Modal Styles */
 .modal {
   position: fixed;
   top: 0;
@@ -1367,57 +1427,64 @@ input.error, select.error, textarea.error {
 
 .modal-content {
   background-color: white;
+  padding: 40px;
   border-radius: var(--border-radius);
   max-width: 800px;
-  width: 90%;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  padding: 30px;
   position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .close-button {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 1.8rem;
-  color: #666;
+  font-size: 1.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
 }
 
 .close-button:hover {
-  color: var(--accent-color);
+  color: var(--primary-color);
+}
+
+.service-details {
+  text-align: center;
 }
 
 .service-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 20px;
   margin-bottom: 20px;
 }
 
 .service-icon.large {
   font-size: 4rem;
+  margin-bottom: 15px;
 }
 
 .price.large {
-  font-size: 2rem;
-  margin: 20px 0;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
 }
 
 .service-description {
   margin-bottom: 30px;
+  text-align: left;
 }
 
 .service-features {
+  text-align: left;
   margin-bottom: 30px;
 }
 
-.service-features h3, .service-duration h3 {
-  font-size: 1.3rem;
-  margin-bottom: 15px;
+.service-features h3,
+.service-duration h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
   color: var(--dark-color);
 }
 
@@ -1426,60 +1493,49 @@ input.error, select.error, textarea.error {
 }
 
 .service-features li {
-  padding: 8px 0;
+  padding: 5px 0 5px 25px;
   position: relative;
-  padding-left: 30px;
 }
 
-.service-features li:before {
+.service-features li::before {
   content: '✓';
-  color: var(--primary-color);
   position: absolute;
   left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
 }
 
 .service-duration {
+  text-align: left;
   margin-bottom: 30px;
 }
 
-/* Animation Styles */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Animation classes */
 .section-title, .service-card, .step, .testimonial-card {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(30px);
   transition: all 0.5s ease;
 }
 
-.section-title.animate, .service-card.animate, .step.animate, .testimonial-card.animate {
+.animate {
   opacity: 1;
   transform: translateY(0);
 }
 
 /* Responsive Styles */
 @media (max-width: 1024px) {
-  .hero-image .actual-image {
-    max-width: 400px;
+  .hero {
+    flex-direction: column;
+    padding: 60px 0 40px;
+  }
+  
+  .hero-content {
+    text-align: center;
+    margin-bottom: 30px;
   }
   
   .hero-content p {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .placeholder-image {
-    width: 100%;
-    max-width: 400px;
-    height: 250px;
+    margin: 0 auto 30px;
   }
 }
 
@@ -1500,22 +1556,9 @@ input.error, select.error, textarea.error {
     flex-direction: column;
   }
   
-  .step:not(:last-child):after {
-    content: '↓';
-    position: absolute;
-    right: 50%;
-    top: auto;
-    bottom: -30px;
-    transform: translateX(50%);
-  }
-  
   .form-row {
     flex-direction: column;
     gap: 10px;
-  }
-  
-  .service-card {
-    min-height: auto;
   }
   
   .carousel-btn {
@@ -1525,11 +1568,20 @@ input.error, select.error, textarea.error {
   }
   
   .prev {
-    left: 0;
+    left: 10px;
   }
   
   .next {
-    right: 0;
+    right: 10px;
+  }
+  
+  .testimonial-card {
+    padding: 20px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+    width: 90%;
   }
 }
 
@@ -1544,6 +1596,17 @@ input.error, select.error, textarea.error {
   
   .form {
     padding: 20px;
+  }
+  
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .whatsapp-icon {
+    font-size: 1.5rem;
   }
 }
 </style>
