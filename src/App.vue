@@ -4,10 +4,13 @@
     <header class="header">
       <div class="logo-container">
         <div class="logo">
-          <span class="icon">👟</span>
+          <div class="logo-icon">
+            <span class="icon">👟</span>
+            <span class="icon-shadow"></span>
+          </div>
           <h1>OhMyWash</h1>
         </div>
-        <p class="tagline">Bersih, Cepat & Terpercaya</p>
+        <p class="tagline">Premium Shoe Care Specialists</p>
       </div>
       <nav class="main-nav">
         <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }" @click.prevent="scrollToSection('home')">Beranda</a>
@@ -30,36 +33,75 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero" ref="home">
-      <div class="hero-content">
-        <h2>Sepatu Bersih, Tampil Percaya Diri</h2>
-        <p>Layanan cuci sepatu profesional dengan teknologi modern dan bahan premium</p>
-        <button class="cta-button" @click="scrollToSection('order')">Pesan Sekarang</button>
+  <div class="hero-background">
+    <div class="hero-shape shape-1"></div>
+    <div class="hero-shape shape-2"></div>
+  </div>
+  <div class="hero-content">
+    <h2>Revitalize Your <span class="highlight">Footwear</span></h2>
+    <p>Professional shoe cleaning and restoration services using premium techniques and eco-friendly products</p>
+    <div class="hero-buttons">
+      <button class="cta-button primary" @click="scrollToSection('order')">
+        <span class="btn-icon">🧼</span> Book Now
+      </button>
+      <button class="cta-button secondary" @click="scrollToSection('services')">
+        <span class="btn-icon">👀</span> View Services
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-number">5000+</span>
+        <span class="stat-label">Shoes Cleaned</span>
       </div>
-      <div class="hero-image">
-        <div class="placeholder-image">
-          <img src="/assets/ohmywash.jpeg" alt="OhMyWash Professional Shoe Cleaning Service" class="actual-image">
-        </div>
+      <div class="stat-item">
+        <span class="stat-number">98%</span>
+        <span class="stat-label">Satisfaction</span>
       </div>
-    </section>
+      <div class="stat-item">
+        <span class="stat-number">24h</span>
+        <span class="stat-label">Turnaround</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="image-container">
+      <img src="/assets/ohmywash.jpeg" alt="OhMyWash Professional Shoe Cleaning Service" class="actual-image">
+      <div class="image-accent"></div>
+    </div>
+    <div class="floating-badge">
+      <span class="badge-text">Premium Service</span>
+    </div>
+  </div>
+</section>
 
     <!-- Services Section -->
     <section id="services" class="services" ref="services">
       <h2 class="section-title">Layanan Kami</h2>
       <div class="service-cards">
-        <div 
-          v-for="(service, index) in services" 
-          :key="index" 
-          class="service-card" 
-          :class="{ 'featured': service.featured }"
-          @click="selectService(service)"
-        >
-          <div class="service-icon">{{ service.icon }}</div>
-          <h3>{{ service.name }}</h3>
-          <p>{{ service.description }}</p>
-          <p class="price">{{ service.price }}</p>
-          <button class="order-button">Pilih</button>
-        </div>
-      </div>
+  <div
+    v-for="(service, index) in services" 
+    :key="index" 
+    class="service-card" 
+    :class="{ 'featured': service.featured }"
+    @click="selectService(service)"
+  >
+    <div class="service-icon-container">
+      <div class="service-icon">{{ service.icon }}</div>
+    </div>
+    <h3>{{ service.name }}</h3>
+    <p>{{ service.description }}</p>
+    <p class="price">{{ service.price }}</p>
+    <ul class="service-features-preview">
+      <li v-for="(feature, idx) in service.features.slice(0, 2)" :key="idx">
+        {{ feature }}
+      </li>
+    </ul>
+    <button class="order-button">
+      <span>Select</span>
+      <span class="arrow">→</span>
+    </button>
+  </div>
+</div>
     </section>
 
     <!-- How It Works Section -->
@@ -647,13 +689,16 @@ export default {
 }
 
 :root {
-  --primary-color: #4a90e2;
-  --accent-color: #ff6b6b;
-  --dark-color: #333;
+  --primary-color: #00b4d8; /* Fresh blue */
+  --secondary-color: #0077b6; /* Deeper blue for depth */
+  --accent-color: #ff9e00; /* Vibrant orange for CTAs */
+  --dark-color: #1d3557; /* Rich dark blue instead of black */
   --light-color: #f8f9fa;
-  --text-color: #333;
-  --border-radius: 8px;
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --text-color: #2b2d42;
+  --background-color: #f7f9fc;
+  --card-background: #ffffff;
+  --border-radius: 12px;
+  --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   --transition-speed: 0.3s;
 }
 
@@ -677,6 +722,9 @@ body {
 
 /* Header Styles */
 .header {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -684,7 +732,6 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  background-color: #fff;
   z-index: 1000;
 }
 
@@ -699,19 +746,46 @@ body {
   gap: 10px;
 }
 
-.logo .icon {
-  font-size: 2rem;
+.logo-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.icon {
+  font-size: 2.2rem;
+  position: relative;
+  z-index: 2;
+  }
+
+.icon-shadow {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent-color);
+  filter: blur(8px);
+  opacity: 0.4;
+  border-radius: 50%;
+  z-index: 1;
 }
 
 .logo h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
 }
 
 .tagline {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--secondary-color);
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .main-nav {
@@ -720,17 +794,25 @@ body {
 }
 
 .nav-item {
-  text-decoration: none;
-  color: var(--dark-color);
-  font-weight: 500;
-  padding: 5px 10px;
-  border-radius: var(--border-radius);
-  transition: all var(--transition-speed) ease;
+  font-weight: 600;
+  position: relative;
+  padding: 8px 16px;
 }
 
-.nav-item:hover, .nav-item.active {
-  color: var(--primary-color);
-  background-color: rgba(74, 144, 226, 0.1);
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-item:hover::after, .nav-item.active::after {
+  width: 80%;
 }
 
 /* Mobile Menu */
@@ -794,11 +876,39 @@ body {
 
 /* Hero Styles */
 .hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 80px 0 60px;
-  gap: 40px;
+  position: relative;
+  padding: 120px 0 100px;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.hero-shape {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.shape-1 {
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(0, 119, 182, 0.1));
+}
+
+.shape-2 {
+  bottom: -150px;
+  left: -150px;
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, rgba(255, 158, 0, 0.05), rgba(255, 158, 0, 0.1));
 }
 
 .hero-content {
@@ -806,17 +916,41 @@ body {
 }
 
 .hero-content h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: var(--dark-color);
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 25px;
+  line-height: 1.2;
+}
+
+.highlight {
+  color: var(--primary-color);
+  position: relative;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-color: rgba(0, 180, 216, 0.2);
+  z-index: -1;
 }
 
 .hero-content p {
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 30px;
-  max-width: 500px;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--text-color);
+  opacity: 0.8;
+  max-width: 550px;
+  margin-bottom: 35px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
 }
 
 .hero-image {
@@ -846,16 +980,95 @@ body {
 
 /* CTA Button Styles */
 .cta-button {
-  padding: 12px 24px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 50px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-speed) ease;
-  box-shadow: var(--box-shadow);
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+}
+
+.cta-button.primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  box-shadow: 0 10px 20px rgba(0, 119, 182, 0.3);
+}
+
+.cta-button.secondary {
+  background-color: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.image-container {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.actual-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.image-container:hover .actual-image {
+  transform: scale(1.05);
+}
+
+.image-accent {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 70%;
+  height: 70%;
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+  opacity: 0.2;
+  border-radius: 20px;
+  z-index: -1;
+}
+
+.floating-badge {
+  position: absolute;
+  top: 30px;
+  right: -20px;
+  background: linear-gradient(135deg, var(--accent-color), #ff7b00);
+  color: white;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(255, 158, 0, 0.3);
+  transform: rotate(5deg);
 }
 
 .cta-button:hover {
@@ -896,29 +1109,23 @@ body {
 
 .service-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
 }
 
 .service-card {
-  background-color: #fff;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  transition: all var(--transition-speed) ease;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+  background-color: var(--card-background);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 40px 30px;
+  transition: all 0.4s ease;
+  border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
+
 .service-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-15px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .service-card.featured::before {
@@ -934,44 +1141,127 @@ body {
   transform: rotate(45deg);
 }
 
+.service-icon-container {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(0, 119, 182, 0.1));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
 .service-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
+  font-size: 2.5rem;
 }
 
 .service-card h3 {
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 15px;
   color: var(--dark-color);
 }
 
 .service-card p {
-  color: #666;
+  color: var(--text-color);
+  opacity: 0.8;
   margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 .price {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   color: var(--primary-color);
   margin-bottom: 20px;
 }
 
+.service-features-preview {
+  list-style: none;
+  margin-bottom: 25px;
+}
+
+.service-features-preview li {
+  padding: 8px 0;
+  position: relative;
+  padding-left: 25px;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.service-features-preview li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
 .order-button {
-  padding: 8px 16px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-speed) ease;
+  width: 100%;
+  padding: 12px 0;
+  background-color: var(--card-background);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
 }
 
 .order-button:hover {
-  background-color: #3a80d2;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.order-button .arrow {
+  transition: transform 0.3s ease;
+}
+
+.order-button:hover .arrow {
+  transform: translateX(5px);
+}
+
+.service-card.featured {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+}
+
+.service-card.featured h3,
+.service-card.featured p,
+.service-card.featured .price,
+.service-card.featured .service-features-preview li {
+  color: white;
+  opacity: 1;
+}
+
+.service-card.featured .service-features-preview li::before {
+  color: var(--accent-color);
+}
+
+.service-card.featured .service-icon-container {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.service-card.featured .order-button {
+  background-color: white;
+  color: var(--primary-color);
+  border-color: white;
+}
+
+.service-card.featured .order-button:hover {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.service-card.featured::before {
+  content: 'Popular';
 }
 
 /* How It Works Styles */
