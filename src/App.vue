@@ -879,6 +879,10 @@ body {
   position: relative;
   padding: 120px 0 100px;
   overflow: hidden;
+  display: flex; /* Add flex layout */
+  align-items: center; /* Vertical centering */
+  justify-content: space-between; /* Horizontal distribution */
+  gap: 40px; /* Gap between elements */
 }
 
 .hero-background {
@@ -913,6 +917,7 @@ body {
 
 .hero-content {
   flex: 1;
+  max-width: 50%;
 }
 
 .hero-content h2 {
@@ -958,6 +963,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 50%; /* Explicit width */
+  height: auto; /* Allow height to adjust */
+  position: relative; /* For proper positioning */
 }
 
 .placeholder-image {
@@ -1033,13 +1041,20 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  height: 400px;
+  display: block;
+  background-color: var(--primary-color);
 }
 
 .actual-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.5s ease;
+  display: block; 
+  max-width: none; 
 }
 
 .image-container:hover .actual-image {
