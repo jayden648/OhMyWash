@@ -262,13 +262,13 @@
           <h3>OhMyWash</h3>
         </div>
         <div class="footer-contact">
-          <p><strong>Alamat:</strong> Jl. Sepatu Indah No. 123, Surabaya</p>
-          <p><strong>Telepon:</strong> 021-1234567</p>
-          <p><strong>Email:</strong> @OhMyWash.instagram</p>
+          <p><strong>Alamat:</strong> Ketintang, Surabaya</p>
+          <p><strong>Telepon:</strong> +6285648858764</p>
+          <p><strong>Instagram:</strong> @ohmywash_shoesclean</p>
         </div>
         <div class="footer-hours">
           <h4>Jam Operasional</h4>
-          <p>Senin - Jumat: 08.00 - 20.00</p>
+          <p>Senin - Jumat: 08.00 - 21.00</p>
           <p>Sabtu - Minggu: 10.00 - 18.00</p>
         </div>
         <div class="footer-social">
