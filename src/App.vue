@@ -19,15 +19,15 @@
         <a href="#testimonials" class="nav-item" :class="{ active: activeSection === 'testimonials' }" @click.prevent="scrollToSection('testimonials')">Testimonial</a>
         <a href="#order" class="nav-item" :class="{ active: activeSection === 'order' }" @click.prevent="scrollToSection('order')">Pesan</a>
       </nav>
-      <div class="mobile-menu-toggle" @click="toggleMobileMenu">
+      <div class="mobile-menu-toggle" @click="toggleMobileMenu" :class="{ 'open': showMobileMenu }">
         <div class="bar" v-for="i in 3" :key="i"></div>
       </div>
       <div class="mobile-menu" :class="{ 'show': showMobileMenu }">
-        <a href="#home" @click="scrollToSection('home', true)">Beranda</a>
-        <a href="#services" @click="scrollToSection('services', true)">Layanan</a>
-        <a href="#how-it-works" @click="scrollToSection('how-it-works', true)">Cara Kerja</a>
-        <a href="#testimonials" @click="scrollToSection('testimonials', true)">Testimonial</a>
-        <a href="#order" @click="scrollToSection('order', true)">Pesan</a>
+        <a href="#home" @click="scrollToSection('home', true)" :class="{ 'active-mobile-link': activeSection === 'home' }">Beranda</a>
+        <a href="#services" @click="scrollToSection('services', true)" :class="{ 'active-mobile-link': activeSection === 'services' }">Layanan</a>
+        <a href="#how-it-works" @click="scrollToSection('how-it-works', true)" :class="{ 'active-mobile-link': activeSection === 'how-it-works' }">Cara Kerja</a>
+        <a href="#testimonials" @click="scrollToSection('testimonials', true)" :class="{ 'active-mobile-link': activeSection === 'testimonials' }">Testimonial</a>
+        <a href="#order" @click="scrollToSection('order', true)" :class="{ 'active-mobile-link': activeSection === 'order' }">Pesan</a>
       </div>
     </header>
 
@@ -164,7 +164,7 @@
         <button class="cta-button" @click="orderSuccess = false">Pesan Lagi</button>
       </div>
 
-      <form v-else class="form">
+      <form v-else class="form" @submit.prevent="submitOrder">
         <div class="form-row">
           <div class="form-group">
             <label for="name">Nama Lengkap <span class="required">*</span></label>
@@ -242,7 +242,7 @@
           </div>
         </div>
         
-        <button type="submit" class="submit-button" @click.prevent="submitOrder">
+        <button type="submit" class="submit-button">
           <span v-if="loading" class="loading-spinner"></span>
           <span v-else>Kirim Pesanan</span>
         </button>
@@ -640,15 +640,14 @@ export default {
       if (!this.validateForm()) {
         return;
       }
-      
-      // Show loading state
+
       this.loading = true;
-      
+
       try {
-        // Simulate API request
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Show success message
+        console.log('Simulating order submission:', this.formData);
+        // Simulate a delay for submission
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         this.orderSuccess = true;
         this.resetForm();
       } catch (error) {
@@ -833,6 +832,18 @@ body {
   transition: all var(--transition-speed) ease;
 }
 
+/* Mobile Menu Toggle Animation */
+.mobile-menu-toggle.open .bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.mobile-menu-toggle.open .bar:nth-child(2) {
+  opacity: 0;
+}
+.mobile-menu-toggle.open .bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+
 .mobile-menu {
   display: none;
   position: fixed;
@@ -841,9 +852,9 @@ body {
   right: 0;
   bottom: 0;
   background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   flex-direction: column;
-  padding: 20px;
+  padding-top: 20px; /* Adjusted padding */
+  background-color: #f8f9fa; /* Lighter, cleaner background */
   z-index: 1000;
   opacity: 0;
   transform: translateX(-100%);
@@ -856,19 +867,25 @@ body {
 }
 
 .mobile-menu a {
-  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 25px; /* Increased padding */
   text-decoration: none;
   color: var(--dark-color);
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e0e0e0; /* Softer border */
   font-weight: 500;
-  font-size: 1.2rem;
+  font-size: 1.1rem; /* Adjusted font size */
   transition: all var(--transition-speed) ease;
 }
 
-.mobile-menu a:hover {
+.mobile-menu a:hover, .mobile-menu a.active-mobile-link {
   color: var(--primary-color);
-  background-color: rgba(74, 144, 226, 0.05);
+  background-color: #e9f5f8; /* Subtle hover/active background */
+  border-left: 3px solid var(--primary-color); /* Active indicator */
+  padding-left: 22px; /* Adjust padding for border */
 }
+
 
 .mobile-menu a:last-child {
   border-bottom: none;
@@ -948,7 +965,7 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   opacity: 0.8;
-  max-width: 550px;
+  max-width: 650px; /* Increased base max-width for better readability on desktop */
   margin-bottom: 35px;
 }
 
@@ -1827,20 +1844,72 @@ textarea {
   transform: translateY(0);
 }
 
+/* Desktop First Enhancements (Overrides for larger screens) */
+@media (min-width: 1201px) {
+  /* Styles for screens 1201px and wider */
+  .app-container, .footer-content, .footer-bottom {
+    max-width: 1400px;
+  }
+}
+
+@media (min-width: 1600px) {
+  /* Styles for screens 1600px and wider */
+  .app-container, .footer-content, .footer-bottom {
+    max-width: 1550px; /* Further increase max-width for very wide screens */
+  }
+
+  .hero-content h2 {
+    font-size: 3.8rem; /* Larger hero title */
+  }
+
+  .hero-content p {
+    max-width: 700px; /* Wider hero paragraph for very large screens */
+  }
+
+  .hero-image .image-container {
+    height: 480px; /* Taller hero image container */
+  }
+
+  .section-title {
+    font-size: 2.2rem; /* Larger section titles */
+  }
+
+  .services, .how-it-works, .testimonials, .order-form {
+    padding-top: 90px; /* Increased vertical padding for sections */
+    padding-bottom: 90px;
+  }
+
+  .steps { /* For 'How it works' section */
+    max-width: 1100px; /* Allow steps to spread out more */
+  }
+  .testimonial-carousel {
+    max-width: 950px; /* Wider testimonial carousel */
+  }
+  .form { /* For Order Form section */
+    max-width: 850px; /* Slightly wider form */
+  }
+}
+
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .hero {
     flex-direction: column;
-    padding: 60px 0 40px;
+    padding: 80px 0 60px; /* Adjusted padding for tablet */
   }
   
   .hero-content {
     text-align: center;
     margin-bottom: 30px;
+    max-width: 90%;
   }
-  
-  .hero-content p {
-    margin: 0 auto 30px;
+
+  .hero-content h2 {
+    font-size: 3rem; /* Slightly smaller for tablet */
+  }
+
+  .hero-image {
+    width: 70%;
+    max-width: 450px;
   }
 }
 
@@ -1854,51 +1923,183 @@ textarea {
   }
   
   .mobile-menu {
-    display: flex;
+    display: flex; /* This enables the menu to be shown via .show class */
+  }
+
+  .header {
+    padding: 15px 0;
+  }
+
+  .hero {
+    padding: 60px 0 40px; /* Specific padding for mobile */
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%; /* Full width for mobile content */
+  }
+
+  .hero-content h2 {
+    font-size: 2.2rem; /* Adjusted for mobile */
+    margin-bottom: 15px;
+  }
+  .hero-content p {
+    font-size: 0.95rem; /* Adjusted for mobile */
+    margin: 0 auto 25px;
   }
   
+  .hero-content p {
+    margin: 0 auto 30px;
+  }
+}
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+
+  .cta-button {
+    width: auto;
+    min-width: 200px;
+    padding: 12px 22px;
+    font-size: 0.9rem;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .stat-item {
+    align-items: center;
+  }
+
+  .hero-image {
+    width: 85%;
+    max-width: 320px;
+    margin-top: 25px;
+  }
+
+  .floating-badge {
+    font-size: 0.8rem;
+    padding: 7px 18px;
+    top: 10px;
+    right: -5px;
+  }
+
+  .service-cards {
+    gap: 20px;
+  }
+  .service-card {
+    padding: 25px 20px;
+  }
+  .service-card.featured::before {
+    font-size: 0.65rem;
+    padding: 3px 25px;
+    top: 6px;
+    right: -30px;
+  }
+
+  .section-title {
+    font-size: 1.7rem;
+    margin-bottom: 35px;
+  }
+  .section-title::after {
+    width: 45px;
+  }
+
   .steps {
     flex-direction: column;
+    gap: 15px;
   }
-  
+  .step {
+    padding: 20px;
+  }
+
   .form-row {
     flex-direction: column;
     gap: 10px;
   }
-  
+  .form {
+    padding: 25px 15px;
+  }
+  .submit-button {
+    width: 100%;
+    max-width: 280px; /* Max width for submit button on mobile */
+  }
+
+  .testimonial-carousel {
+    padding: 0 5px; /* Reduced padding for carousel */
+  }
   .carousel-btn {
     width: 30px;
     height: 30px;
     font-size: 1rem;
   }
-  
   .prev {
-    left: 10px;
+    left: 0px; /* Adjusted button position */
   }
-  
   .next {
-    right: 10px;
+    right: 0px; /* Adjusted button position */
   }
-  
   .testimonial-card {
     padding: 20px;
   }
-  
+  .quote {
+    font-size: 0.95rem;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footer-logo, .social-icons {
+    justify-content: center;
+  }
+  .footer-contact p, .footer-hours p {
+    font-size: 0.8rem;
+  }
+
   .modal-content {
     padding: 20px;
     width: 90%;
   }
-}
+
 
 @media (max-width: 480px) {
-  .hero-content h2 {
-    font-size: 2rem;
+  .header {
+    padding: 10px 0; /* Further reduce header padding */
   }
-  
-  .section-title {
+  .logo h1 {
+    font-size: 1.5rem; /* Smaller logo text */
+  }
+  .icon { /* Shoe icon */
     font-size: 1.8rem;
   }
-  
+  .tagline {
+    font-size: 0.7rem; /* Smaller tagline */
+    letter-spacing: 0.5px;
+  }
+
+  .hero-content h2 {
+    font-size: 1.9rem; /* Further refinement for smallest screens */
+  }
+  .hero-content p {
+    font-size: 0.85rem;
+  }
+  .cta-button {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+  }
+   .btn-icon {
+    font-size: 0.9rem;
+  }
+  .section-title {
+    font-size: 1.5rem; /* Further refinement for smallest screens */
+  }
   .form {
     padding: 20px;
   }
@@ -1909,9 +2110,23 @@ textarea {
     bottom: 20px;
     right: 20px;
   }
-  
   .whatsapp-icon {
     font-size: 1.5rem;
+  }
+  .stat-number {
+    font-size: 1.4rem;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+  }
+  .modal-content .service-icon.large {
+    font-size: 2.5rem;
+  }
+  .modal-content h2 {
+    font-size: 1.3rem;
+  }
+  .modal-content .price.large {
+    font-size: 1.1rem;
   }
 }
 </style>
