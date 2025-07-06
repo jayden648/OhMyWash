@@ -468,8 +468,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">
-                <img src="/storage/ohmywash-logo.jpg" alt="OhMyWash Logo" class="logo-img">
-                OhMyWash
+                <img src="{{ asset('images/ohmywash-logo.jpg') }}" alt="OhMyWash Logo" class="logo-img">
             </a>
             <div class="nav-links">
                 <a href="#home">Home</a>
@@ -484,7 +483,7 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <img src="/storage/ohmywash-logo.jpg" alt="OhMyWash Logo" class="hero-logo">
+            <img src="{{ asset('images/ohmywash-logo.jpg') }}" alt="OhMyWash Logo" class="logo-img">
             <h1>Selamat Datang di OhMyWash</h1>
             <p>Layanan cuci sepatu terpercaya dengan kualitas terbaik. Sepatu kotor? Biar kami yang urusin! Proses cepat, hasil maksimal, kepuasan terjamin.</p>
             <div class="hero-buttons">
