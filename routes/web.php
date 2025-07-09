@@ -6,7 +6,10 @@ use App\Http\Controllers\Customer\CustomerController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
-Route::get('/', function () {
+Route::get('/clear-cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    return 'Cache cleared!';
     return view('welcome');
 });
 
